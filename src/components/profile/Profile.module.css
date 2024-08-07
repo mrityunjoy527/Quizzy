@@ -1,0 +1,148 @@
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2a2c42;
+  box-sizing: border-box;
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+
+  .user {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #e2223b2d;
+    height: 100%;
+    gap: 2rem;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    p {
+      max-width: 90%;
+      text-align: center;
+      font-style: italic;
+      color: gray;
+      font-size: 1.3rem;
+    }
+
+    .information {
+      width: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: #e2223b52;
+      padding: 10px;
+      border-radius: 8px;
+      -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+      -ms-border-radius: 8px;
+      -o-border-radius: 8px;
+      gap: 1rem;
+
+      p {
+        text-align: start;
+        color: #2a2c42;
+        font-size: 1.3rem;
+        font-style: normal;
+
+        span {
+          font-weight: 700;
+        }
+      }
+    }
+
+    img {
+      width: 12rem;
+      height: 12rem;
+      border-radius: 50%;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      -o-border-radius: 50%;
+      outline: 7px solid #e2223b2d;
+      object-fit: cover;
+    }
+  }
+
+  .askedQuizzes {
+    padding: 14px;
+    flex: 3;
+    overflow-y: scroll;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    position: relative;
+    background-color: #e2223b52;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -o-border-radius: 8px;
+    gap: 3rem;
+
+    img {
+      z-index: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
+      bottom: 0;
+      object-fit: cover;
+      filter: blur(7px);
+      -webkit-filter: blur(7px);
+    }
+
+    .quizzes {
+      background-color: white;
+      width: 20rem;
+      height: 18rem;
+      padding: 10px;
+      border-radius: 12px;
+      -webkit-border-radius: 12px;
+      -moz-border-radius: 12px;
+      -ms-border-radius: 12px;
+      -o-border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+
+      &:hover {
+        box-shadow: 5px 5px 15px #ff6969;
+      }
+
+      .deleteQuiz {
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+
+        &:active {
+          scale: 0.8;
+        }
+      }
+
+      p {
+        margin-bottom: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #2a2c42;
+        font-style: italic;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}

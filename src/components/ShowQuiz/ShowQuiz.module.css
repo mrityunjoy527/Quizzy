@@ -1,0 +1,105 @@
+.showQuiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 30px;
+  max-width: 50%;
+  margin-right: 5%;
+  gap: 40px;
+
+  .progress {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 58%;
+    height: 10px;
+    background: linear-gradient(to right, #ad162a, #e2223d);
+  }
+
+  .questionNumber {
+    position: absolute;
+    width: 200px;
+    top: 0;
+    left: 0;
+    padding: 10px 30px;
+    background-color: #e2223d;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 20px;
+    text-transform: uppercase;
+  }
+
+  header {
+    font-size: 30px;
+    font-weight: 800;
+    width: 70%;
+  }
+
+  .option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 50%;
+  }
+
+  .option p {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 25px;
+    width: 100%;
+    text-align: center;
+    padding: 20px 40px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    outline: 2px solid rgb(218, 218, 218);
+    box-shadow: 1px 1px 5px rgb(209, 209, 209);
+    &:hover {
+        box-shadow: 1px 1px 5px rgb(139, 139, 139);
+    }
+  }
+  .quizNav {
+    display: flex;
+    gap: 100px;
+    position: absolute;
+    right: 5;
+    bottom: 10px;
+
+    .button {
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      outline: 1px solid #2a2c42;
+      padding: 15px 20px;
+
+      &:last-child {
+        background: linear-gradient(to right, #ad162a, #e2223d);
+        color: white;
+      }
+
+      &:active {
+        scale: 0.9;
+        box-shadow: 2px 2px 10px #2a2c42;
+      }
+
+      span {
+        font-size: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
