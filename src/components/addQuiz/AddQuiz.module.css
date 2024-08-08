@@ -15,12 +15,12 @@
     right: 0;
     width: calc(100% - 200px);
     height: 10px;
-    background: linear-gradient(to right, #e2223d, #ad162a, #e2223d);
+    background: linear-gradient(to right, #e2223d, #ff3d57, #e2223d);
   }
 
   .questionNumber {
     position: absolute;
-    width: 200px;
+    min-width: 200px;
     top: 0;
     left: 0;
     padding: 10px 30px;

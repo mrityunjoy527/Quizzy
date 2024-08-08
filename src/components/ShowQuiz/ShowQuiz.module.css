@@ -12,9 +12,9 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 58%;
+    width: calc(100% - 200px);
     height: 10px;
-    background: linear-gradient(to right, #ad162a, #e2223d);
+    background: linear-gradient(to right, #e2223d, #ad162a, #e2223d);
   }
 
   .questionNumber {
@@ -60,7 +60,7 @@
     outline: 2px solid rgb(218, 218, 218);
     box-shadow: 1px 1px 5px rgb(209, 209, 209);
     &:hover {
-        box-shadow: 1px 1px 5px rgb(139, 139, 139);
+      box-shadow: 1px 1px 5px rgb(139, 139, 139);
     }
   }
   .quizNav {

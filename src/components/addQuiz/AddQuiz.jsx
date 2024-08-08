@@ -1,16 +1,24 @@
 import classes from "./AddQuiz.module.css";
 import { useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { Form } from "react-router-dom";
+import useAddQuiz from "../../useAddQuiz";
 
-export default function ShowQuiz() {
+export default function AddQuiz() {
 
-    const [addQuestion, setAddQuestion] = useState(false);
-    const [option, setOption] = useState({
+    const { quizzes, totalQuizzes, addQuiz } = useAddQuiz();
+    console.log(quizzes);
+
+    const defaultQuiz = {
+        question: false,
         option1: false,
         option2: false,
         option3: false,
         option4: false,
-    });
+    };
+
+
+    const [quizAction, setQuizAction] = useState(defaultQuiz);
     const [selected, setSelected] = useState(0);
 
     const handleOptions = (optionNum) => {
@@ -28,7 +36,7 @@ export default function ShowQuiz() {
             default:
                 addOption = "option4";
         }
-        setOption(prev => {
+        setQuizAction(prev => {
             return {
                 ...prev,
                 [addOption]: true,
@@ -37,69 +45,97 @@ export default function ShowQuiz() {
     }
 
     const handleDelete = (optionNumber) => {
-        setOption(prev => ({ ...prev, [`option${optionNumber}`]: false }));
+        setQuizAction(prev => ({ ...prev, [`option${optionNumber}`]: false }));
         if (optionNumber === selected) {
             setSelected(0);
         }
     }
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        const { question, answer1, answer2, answer3, answer4 } = data;
+        const newQuestion = {
+            question: question,
+            answer1: {
+                ans: answer1,
+                correct: selected === 1,
+            },
+            answer2: {
+                ans: answer2,
+                correct: selected === 2,
+            },
+            answer3: {
+                ans: answer3,
+                correct: selected === 3,
+            },
+            answer4: {
+                ans: answer4,
+                correct: selected === 4,
+            },
+        };
+        // console.log(newQuestion);
+        if (totalQuizzes < 5) addQuiz(newQuestion);
+        setSelected(0);
+        setQuizAction(defaultQuiz);
     }
 
     return <section className={classes.showQuiz}>
         <div className={classes.progress}></div>
-        <p className={classes.questionNumber}>Question 1/5</p>
-        <form className={classes.form} method="post" onSubmit={submitHandler}>
-            {!addQuestion ?
-                <header onClick={() => setAddQuestion(true)}>
+        <p className={classes.questionNumber}>
+            {totalQuizzes === 5? `5 Quizzes already added`: `Question ${totalQuizzes+1}/5`}
+        </p>
+        <Form className={classes.form} method="post" onSubmit={submitHandler}>
+            {!quizAction.question ?
+                <header onClick={() => setQuizAction(prev => ({ ...prev, question: true }))}>
                     <IoIosAddCircleOutline className={classes.addQuestion} />
                     <p>Add Question</p>
                 </header> :
-                <textarea className={classes.question} required name="Question" placeholder="What is the best quiz app you know ?" />
+                <textarea className={classes.question} required name="question" placeholder="What is the best quiz app you know ?" />
             }
             <div className={classes.option}>
-                {option.option1 === false ?
+                {quizAction.option1 === false ?
                     <header onClick={() => handleOptions(1)}>
                         <IoIosAddCircleOutline className={classes.addQuestion} />
                         <p>Answer 1</p>
                     </header> :
                     <figure>
-                        <input type="checkbox" checked={selected === 1} onClick={() => setSelected(1)} />
-                        <input type="text" name="answer" placeholder="Answer" />
+                        <input type="checkbox" checked={selected === 1} onChange={() => setSelected(1)} />
+                        <input type="text" name="answer1" placeholder="Answer" />
                         <p className={classes.cross} onClick={() => handleDelete(1)}> Delete</p>
                     </figure>
                 }
-                {option.option2 === false ?
+                {quizAction.option2 === false ?
                     <header onClick={() => handleOptions(2)}>
                         <IoIosAddCircleOutline className={classes.addQuestion} />
                         <p>Answer 2</p>
                     </header> :
                     <figure>
-                        <input type="checkbox" checked={selected === 2} onClick={() => setSelected(2)} />
-                        <input type="text" name="answer" placeholder="Answer" />
+                        <input type="checkbox" checked={selected === 2} onChange={() => setSelected(2)} />
+                        <input type="text" name="answer2" placeholder="Answer" />
                         <p className={classes.cross} onClick={() => handleDelete(2)}>Delete</p>
                     </figure>
                 }
-                {option.option3 === false ?
+                {quizAction.option3 === false ?
                     <header onClick={() => handleOptions(3)}>
                         <IoIosAddCircleOutline className={classes.addQuestion} />
                         <p>Answer 3</p>
                     </header> :
                     <figure>
-                        <input type="checkbox" checked={selected === 3} onClick={() => setSelected(3)} />
-                        <input type="text" name="answer" placeholder="Answer" />
+                        <input type="checkbox" checked={selected === 3} onChange={() => setSelected(3)} />
+                        <input type="text" name="answer3" placeholder="Answer" />
                         <p className={classes.cross} onClick={() => handleDelete(3)}>Delete</p>
                     </figure>
                 }
-                {option.option4 === false ?
+                {quizAction.option4 === false ?
                     <header onClick={() => handleOptions(4)}>
                         <IoIosAddCircleOutline className={classes.addQuestion} />
                         <p>Answer 4</p>
                     </header> :
                     <figure>
-                        <input type="checkbox" checked={selected === 4} onClick={() => setSelected(4)} />
-                        <input type="text" name="answer" placeholder="Answer" />
+                        <input type="checkbox" checked={selected === 4} onChange={() => setSelected(4)} />
+                        <input type="text" name="answer4" placeholder="Answer" />
                         <p className={classes.cross} onClick={() => handleDelete(4)}>Delete</p>
                     </figure>
                 }
@@ -108,6 +144,6 @@ export default function ShowQuiz() {
             <button className={classes.saveButton}>
                 <span>Save</span>
             </button>
-        </form>
+        </Form>
     </section >
 }

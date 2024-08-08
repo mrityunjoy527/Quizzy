@@ -1,16 +1,13 @@
 import { create } from "zustand";
 
 const useAddQuiz = create((set) => ({
-  totalQuestions: 0,
-  questions: [],
-  addQuestion: function (question) {
-    if (this.totalQuestions === 5) return false;
+  totalQuizzes: 0,
+  quizzes: [],
+  addQuiz: (quiz) =>
     set((state) => ({
-      questions: [...state.questions, question],
-      totalQuestions: state.totalQuestions + 1,
-    }));
-    return true;
-  },
+      quizzes: [...state.quizzes, quiz],
+      totalQuizzes: state.totalQuizzes + 1,
+    })),
 }));
 
 export default useAddQuiz;

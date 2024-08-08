@@ -6,7 +6,9 @@ import Login from "./components/user-connect/Login.jsx";
 import Register from "./components/user-connect/Register.jsx";
 import LandingPage from './components/LandingPage/LandingPage.jsx';
 import Profile from "./components/profile/Profile.jsx";
-import AddQuiz from "./components/addQuiz/AddQuiz.jsx"
+import AddQuiz from "./components/addQuiz/AddQuiz.jsx";
+import Home from "./components/home/Home.jsx";
+import { ShowQuiz } from './components/ShowQuiz/ShowQuiz.jsx';
 
 const router = createBrowserRouter([
   {
@@ -30,8 +32,18 @@ const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/add-quiz",
-        element: <AddQuiz />,
+        path: "/quiz",
+        element: <Home />,
+        children: [
+          {
+            path: '/quiz/add-quiz',
+            element: <AddQuiz />
+          },
+          {
+            path: '/quiz/take-quiz',
+            element: <ShowQuiz />
+          }
+        ]
       },
     ]
   },
