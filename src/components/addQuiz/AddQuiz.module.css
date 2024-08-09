@@ -16,6 +16,7 @@
     width: calc(100% - 200px);
     height: 10px;
     background: linear-gradient(to right, #e2223d, #ff3d57, #e2223d);
+    margin-left: 500px;
   }
 
   .questionNumber {

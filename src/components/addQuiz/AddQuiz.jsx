@@ -3,6 +3,8 @@ import { useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { Form } from "react-router-dom";
 import useAddQuiz from "../../useAddQuiz";
+import Dialog from "../Dialog/Dialog.jsx";
+import Modal from "../Modal/Modal.jsx";
 
 export default function AddQuiz() {
 
@@ -75,16 +77,24 @@ export default function AddQuiz() {
                 correct: selected === 4,
             },
         };
-        // console.log(newQuestion);
+        let optionCnt = 0;
+        for(const q of quizAction.entries()) {
+            if(q[1] === true) optionCnt++;
+        }
+        if(optionCnt < 2) return;
+        if(selected === 0) return;
         if (totalQuizzes < 5) addQuiz(newQuestion);
         setSelected(0);
         setQuizAction(defaultQuiz);
     }
 
     return <section className={classes.showQuiz}>
+        {totalQuizzes === 5 && <Modal>
+            <Dialog text={'You Have Added Total Number of Quizzes'} />
+        </Modal>}
         <div className={classes.progress}></div>
         <p className={classes.questionNumber}>
-            {totalQuizzes === 5? `5 Quizzes already added`: `Question ${totalQuizzes+1}/5`}
+            {totalQuizzes === 5 ? `5 Quizzes already added` : `Question ${totalQuizzes + 1}/5`}
         </p>
         <Form className={classes.form} method="post" onSubmit={submitHandler}>
             {!quizAction.question ?
