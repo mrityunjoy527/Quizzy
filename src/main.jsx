@@ -9,6 +9,7 @@ import Profile from "./components/profile/Profile.jsx";
 import AddQuiz from "./components/addQuiz/AddQuiz.jsx";
 import Home from "./components/home/Home.jsx";
 import { ShowQuiz } from './components/ShowQuiz/ShowQuiz.jsx';
+import { EditProfile } from './components/user-connect/EditProfile.jsx';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
           }
         ]
       },
+      {
+        path: "/edit-profile",
+        element: <EditProfile />,
+      }
     ]
   },
 ]);

@@ -1,37 +1,54 @@
-import { useState } from 'react';
-import "./register.css";
+import classes from "./Register.module.css";
 import useRegister from '../../useRegister';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from "../../firebase/configuration";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import useFirebaseUser from "../../useFirebaseUser";
+import Progress from "../progress/Progress";
+import { useState } from "react";
 
 function Register() {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const {toggleRegister} = useRegister();
+    const navigate = useNavigate();
+    const { toggleRegister } = useRegister();
+    const { setFirebaseUser } = useFirebaseUser();
+    const [registering, setRegistering] = useState(false);
 
-    const handleSubmit = async (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
-        
+        setRegistering(true);
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        const { name, email, password } = data;
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = res.user.uid;
+            setFirebaseUser({ uid, name, email });
+            navigate("/edit-profile", { replace: false });
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setRegistering(false);
+        }
     }
 
     return (
-        <div className='login'>
-            <h2>Create your account on Quzzy!</h2>
-            <p className='subHead'>Sign Up to ASK and ANSWER quizzes</p>
-            <form onSubmit={handleSubmit}>
+        <div className={classes.login}>
+            <h2>Create your account on Quizzy!</h2>
+            <p className={classes.subHead}>Sign Up to ASK and ANSWER quizzes</p>
+            <form method="post" onSubmit={submitHandler} action="/register">
                 <label htmlFor="name">Name*</label>
-                <input id='name' type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" required />
+                <input id='name' type="text" name="name" placeholder="Enter your name" required />
                 <label htmlFor="email">Email*</label>
-                <input id='email' type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required />
+                <input id='email' type="email" name="email" placeholder="Enter your email" required />
                 <label htmlFor="password">Password*</label>
-                <input id='password' type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" required />
-                <button type="submit">Get Started</button>
+                <input id='password' type="password" name="password" placeholder="Create a password" required />
+                <button>
+                    {registering ? <Progress /> : "Sign Up"}
+                </button>
             </form>
-
             <p>Already have an account?
                 <Link to='/login' onClick={() => toggleRegister()}>Sign In</Link>
             </p>
-
         </div>
     );
 }

@@ -1,11 +1,25 @@
 import { GrLinkNext } from "react-icons/gr";
 import classes from "./LandingPage.module.css";
+import { useEffect } from "react";
+import useFirebaseUser from "../../useFirebaseUser";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+
+    const {email} = useFirebaseUser();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        if(!email) navigate("/login", {replace: true});
+
+    }, [email, navigate]);
+
+
     return <div className={classes.home}>
         <article className={classes.quizContainer}>
             <div className={classes.description}>
-                <h3>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias asperiores odio nostrum, illo deleniti consectetur quam impedit tempore veniam inventore?</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias asperiores odio nostrum, illo deleniti consectetur quam impedit tempore veniam inventore?</p>
                 <p>
                     <span>Points</span>: 50
                     <span>⭐</span>
