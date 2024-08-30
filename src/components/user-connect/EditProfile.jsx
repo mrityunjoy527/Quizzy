@@ -36,17 +36,18 @@ export const EditProfile = () => {
         const {designation, age } = data;
         try {
             const ref = doc(db, 'users', uid);
+            const imgUrl = await upload(img.file);
             await setDoc(ref, {
+                imgUrl,
                 uid,
                 email,
                 name,
                 age,
                 designation,
                 feedback: 0,
-                takenQuiz: 0,
-                askedQuiz: 0,
+                takenQuiz: [],
+                askedQuiz: [],
             });
-            await upload(img.file);
             navigate("/", { replace: true });
         } catch (e) {
             console.log(e);
@@ -74,7 +75,7 @@ export const EditProfile = () => {
                 <input id='designation' type="designation" name='designation' placeholder="Enter your designation" required />
                 <label htmlFor="age">Age*</label>
                 <input id='age' type="age" name='age' placeholder="Enter your age" required />
-                <button>{showProgress ? <Progress /> : "Sign In"}</button>
+                <button disabled={showProgress}>{showProgress ? <Progress /> : "Sign In"}</button>
             </form>
         </div>
     );

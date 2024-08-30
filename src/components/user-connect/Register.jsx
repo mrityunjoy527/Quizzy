@@ -10,7 +10,7 @@ import { useState } from "react";
 function Register() {
     const navigate = useNavigate();
     const { toggleRegister } = useRegister();
-    const { setFirebaseUser } = useFirebaseUser();
+    const { setLocalFirebaseUser } = useFirebaseUser();
     const [registering, setRegistering] = useState(false);
 
     const submitHandler = async (e) => {
@@ -22,7 +22,8 @@ function Register() {
         try {
             const res = await createUserWithEmailAndPassword(auth, email, password);
             const uid = res.user.uid;
-            setFirebaseUser({ uid, name, email });
+            setLocalFirebaseUser({ uid, name, email });
+            localStorage.setItem("user", uid);
             navigate("/edit-profile", { replace: false });
         } catch (e) {
             console.log(e);
@@ -42,7 +43,7 @@ function Register() {
                 <input id='email' type="email" name="email" placeholder="Enter your email" required />
                 <label htmlFor="password">Password*</label>
                 <input id='password' type="password" name="password" placeholder="Create a password" required />
-                <button>
+                <button disabled={registering}>
                     {registering ? <Progress /> : "Sign Up"}
                 </button>
             </form>

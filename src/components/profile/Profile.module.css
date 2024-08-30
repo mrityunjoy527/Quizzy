@@ -7,6 +7,20 @@
   padding: 10px;
   height: 100%;
   width: 100%;
+  position: relative;
+
+  .backArrow {
+    color: #2a2c42;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 30px;
+    cursor: pointer;
+
+    &:active {
+      scale: 0.9;
+    }
+  }
 
   .user {
     flex: 1;
@@ -72,6 +86,28 @@
       outline: 7px solid #e2223b2d;
       object-fit: cover;
     }
+
+    a {
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      border-radius: 6px;
+      background: linear-gradient(to right, #ad162a, #e2223bbb);
+      color: white;
+      -webkit-border-radius: 6px;
+      -moz-border-radius: 6px;
+      -ms-border-radius: 6px;
+      -o-border-radius: 6px;
+
+      
+      &:active {
+        scale: 0.9;
+        box-shadow: 2px 2px 10px #2a2c42;
+      }
+    }
   }
 
   .askedQuizzes {
@@ -90,6 +126,13 @@
     -moz-border-radius: 8px;
     -o-border-radius: 8px;
     gap: 3rem;
+    position: relative;
+
+    h2 {
+      font-size: 3rem;
+      z-index: 1;
+      color: white;
+    }
 
     img {
       z-index: 0;
@@ -122,8 +165,8 @@
       }
 
       .deleteQuiz {
-        width: 30px;
-        height: 30px;
+        width: 2rem;
+        height: 2rem;
         cursor: pointer;
         position: absolute;
         bottom: 10px;

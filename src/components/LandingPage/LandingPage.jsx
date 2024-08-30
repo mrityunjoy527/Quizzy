@@ -6,17 +6,35 @@ import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
 
-    const {email} = useFirebaseUser();
+    const { fetchFirebaseUser } = useFirebaseUser();
     const navigate = useNavigate();
+
 
     useEffect(() => {
 
-        if(!email) navigate("/login", {replace: true});
+        const fetchUser = async (uid) => {
+            await fetchFirebaseUser(uid);
+        }
 
-    }, [email, navigate]);
+        const user = localStorage.getItem("user");
+        if (!user) navigate("/login", { replace: true });
+        fetchUser(user);
+
+    }, [navigate, fetchFirebaseUser]);
 
 
     return <div className={classes.home}>
+        <nav>
+            <figure>
+                <img src="./logo.png" alt="logo" />
+                <p>Quizzy?</p>
+            </figure>
+            <ul>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="/quiz/add-quiz">Add Quiz</a></li>
+                <li><a href="/">Random Quiz</a></li>
+            </ul>
+        </nav>
         <article className={classes.quizContainer}>
             <div className={classes.description}>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias asperiores odio nostrum, illo deleniti consectetur quam impedit tempore veniam inventore?</p>
@@ -28,13 +46,6 @@ const LandingPage = () => {
                     <img src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?cs=srgb&dl=pexels-simon-robben-55958-614810.jpg&fm=jpg" alt="" />
                     <p>Mrityunjoy Barman</p>
                 </figure>
-            </div>
-            <div className={classes.questions}>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit?</p>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit Lorem, ipsum?</p>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit Lorem ?</p>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit?</p>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit Lorem ipsum dolor sit amet?</p>
             </div>
             <button>
                 <span>Start Quiz</span>

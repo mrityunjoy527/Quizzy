@@ -3,11 +3,10 @@ import useRegister from '../../useRegister';
 import classes from "./Register.module.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../../firebase/configuration';
+import { auth,} from '../../firebase/configuration';
 import Progress from '../progress/Progress';
 import { useState } from 'react';
 import useFirebaseUser from "../../useFirebaseUser";
-import { doc, getDoc } from 'firebase/firestore';
 
 
 function Login() {
@@ -15,24 +14,20 @@ function Login() {
   const { toggleRegister } = useRegister();
   const [showProgress, setShowProgress] = useState(false);
   const navigate = useNavigate();
-  const { setFirebaseUser } = useFirebaseUser();
+  const { fetchFirebaseUser } = useFirebaseUser();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowProgress(true);
-    const formData = await new FormData(e.target);
+    const formData = new FormData(e.target);
     const data = Object.fromEntries(formData);
     const { email, password } = data;
     try {
       const res = await signInWithEmailAndPassword(auth, email, password);
-      const ref = doc(db, 'users', res.user.uid);
-      const docSnap = await getDoc(ref);
-      if(docSnap.exists()) {
-        const userData = docSnap.data();
-        console.log(userData);
-        setFirebaseUser(userData);
-        navigate("/", { replace: true });
-      }
+      const uid = res.user.uid;
+      await fetchFirebaseUser(uid);
+      localStorage.setItem("user", uid);
+      navigate("/", { replace: true });
     } catch (e) {
       console.err(e);
     } finally {
@@ -50,7 +45,7 @@ function Login() {
         <label htmlFor="password">Password*</label>
         <input id='password' type="password" name="password" placeholder="Create a password" required />
         <p>Forgot password?</p>
-        <button>{showProgress ? <Progress /> : "Sign In"}</button>
+        <button disabled={showProgress}>{showProgress ? <Progress /> : "Sign In"}</button>
       </form>
 
 
