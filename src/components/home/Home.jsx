@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 export default function Home() {
 
     return <div className="home">
-        <img src="../../public/wonder.png" alt="" />
+        <img src="./wonder.png" alt="" />
         <div className="quiz-desc">
             <Outlet />
         </div>

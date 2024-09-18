@@ -26,8 +26,17 @@ const useFirebaseUser = create((set) => ({
       throw new Error(e);
     }
   },
-  setAskedQuiz(newAskedQuiz) {
-    set({ askedQuiz: newAskedQuiz });
+  async fetchAskedQuiz(uid) {
+    try {
+      const ref = doc(db, "users", uid);
+      const docSnap = await getDoc(ref);
+      if (docSnap.exists()) {
+        const { askedQuiz } = docSnap.data();
+        set((state) => ({...state, askedQuiz: [...askedQuiz] }));
+      }
+    } catch (err) {
+      console.log(err);
+    }
   },
 }));
 

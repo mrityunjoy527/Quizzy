@@ -3,7 +3,7 @@ import useFirebaseUser from "../../useFirebaseUser";
 import classes from "./Profile.module.css";
 import { MdDelete } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
-import { doc, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/configuration";
 import { FaArrowLeft } from "react-icons/fa";
 import Dialog from "../Dialog/Dialog";
@@ -20,7 +20,7 @@ const Profile = () => {
         takenQuiz,
         askedQuiz,
         fetchFirebaseUser,
-        setAskedQuiz,
+        fetchAskedQuiz,
     } = useFirebaseUser();
     const navigate = useNavigate();
     const user = localStorage.getItem("user");
@@ -34,11 +34,12 @@ const Profile = () => {
 
         fetchFirebaseUser(user);
 
-    }, [user, fetchFirebaseUser, name]);
+    }, [fetchFirebaseUser, user]);
+
 
     useEffect(() => {
-        const fetchQuizzes = async () => {
-            const quizzesFromFirestore = [];
+
+        const fetchQuizzes = async function () {
             try {
                 askedQuiz.forEach(async quizId => {
                     const ref = doc(db, "quizzes", quizId);
@@ -46,30 +47,34 @@ const Profile = () => {
                     if (snapShot.exists()) {
                         const quiz = snapShot.data();
                         const quizDesc = { quizId, questions: quiz.quizzes };
-                        quizzesFromFirestore.push(quizDesc);
+                        setQuizzes(prev => [...prev, quizDesc]);
                     }
                 });
-                setQuizzes(quizzesFromFirestore);
             } catch (e) {
                 console.log(e);
             }
         }
+
         fetchQuizzes();
 
-    }, [name, askedQuiz]);
+    }, [askedQuiz]);
 
 
     async function deleteHandler() {
         if (deleteQuizId) {
             try {
+                const newQuizzes = quizzes.filter(quiz => quiz.quizId !== deleteQuizId);
                 await deleteDoc(doc(db, "quizzes", deleteQuizId));
-                const newAskedQuiz = askedQuiz.filter(quizId => quizId !== deleteQuizId);
-                setAskedQuiz(newAskedQuiz);
+                fetchAskedQuiz(user);
+                await updateDoc(doc(db, "users", user), { askedQuiz: askedQuiz });
+                setQuizzes(newQuizzes);
             } catch (err) {
                 console.log(err);
+            } finally {
+                setShowDialog(false);
+                setDeleteQuizId();
             }
         }
-        setShowDialog(false);
     }
 
     return <section className={classes.profile}>
@@ -98,19 +103,26 @@ const Profile = () => {
             {showDialog && <Modal>
                 <Dialog text={'You really want to delete this quiz?'}
                     first={<button onClick={deleteHandler}>Yes</button>}
-                    second={<button>Cancel</button>}
+                    second={<button onClick={() => { setShowDialog(false); }}>Cancel</button>}
                 />
             </Modal>}
             <img src="./wonder.png" alt="" />
-            {quizzes.length === 0 && <h2>No Quizzes Asked Yet... {quizzes.length}</h2>}
-            {quizzes.map((quizDesc) => (
-                <figure key={quizDesc.quizId} className={classes.quizzes}>
-                    {quizDesc.questions.map((q) => (<p key={quizDesc.quizId}>{q?.question}</p>))}
-                    <MdDelete className={classes.deleteQuiz} onClick={() => { setDeleteQuizId(quizDesc.quizId); setShowDialog(true); }} />
+            {quizzes.length === 0 && <h2>No Quizzes Asked Yet...</h2>}
+            {quizzes.map((quizDesc, idx) => (
+                <figure key={`${quizDesc.quizId}${idx}`} className={classes.quizzes}>
+                    {quizDesc.questions.map((quiz, id) => (
+                        <p key={`${quizDesc.quizId}${id}`}>{quiz.question}</p>
+                    ))}
+                    <MdDelete className={classes.deleteQuiz}
+                        onClick={() => {
+                            setDeleteQuizId(quizDesc.quizId);
+                            setShowDialog(true);
+                        }}
+                    />
                 </figure>
             ))}
         </article>
-    </section>;
+    </section>
 }
 
 export default Profile;

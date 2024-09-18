@@ -1,7 +1,6 @@
 import classes from "./AddQuiz.module.css";
 import { useEffect, useState } from "react";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import useAddQuiz from "../../useAddQuiz";
 import Dialog from "../Dialog/Dialog.jsx";
 import Modal from "../Modal/Modal.jsx";
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
@@ -11,11 +10,11 @@ import { useNavigate } from "react-router-dom";
 
 const AddQuiz = () => {
 
-    const { quizzes, totalQuizzes, addQuiz, resetQuiz } = useAddQuiz();
+    const [quizzes, setQuizzes] = useState([]);
     const [cancel, setCancel] = useState(false);
     const [showDialog, setShowDialog] = useState(false);
 
-    const { uid, fetchFirebaseUser } = useFirebaseUser();
+    const { fetchFirebaseUser } = useFirebaseUser();
     const navigate = useNavigate();
     const user = localStorage.getItem("user");
 
@@ -33,15 +32,13 @@ const AddQuiz = () => {
 
     }, [fetchFirebaseUser, user, navigate]);
 
-    const defaultQuiz = {
+    const [quizAction, setQuizAction] = useState({
         question: false,
         option1: false,
         option2: false,
         option3: false,
         option4: false,
-    };
-
-    const [quizAction, setQuizAction] = useState(defaultQuiz);
+    });
     const [selected, setSelected] = useState(0);
 
     const handleOptions = (optionNum) => {
@@ -74,62 +71,69 @@ const AddQuiz = () => {
         }
     }
 
-    const uploadQuiz = async () => {
-        try {
-            const ref = collection(db, 'quizzes');
-            const docRef = await addDoc(ref, { quizzes: [...quizzes] });
-            const { id: docId } = docRef;
-            const userRef = doc(db, "users", uid);
-            const docSnap = await getDoc(userRef);
-            if (docSnap.exists()) {
-                let { askedQuiz } = docSnap.data();
-                askedQuiz ||= [];
-                const newQuiz = [docId, ...askedQuiz];
-                await updateDoc(userRef, { askedQuiz: newQuiz });
-                resetQuiz();
-                console.log("added");
-                setShowDialog(true);
+    useEffect(() => {
+
+        const uploadQuiz = async () => {
+            try {
+                const ref = collection(db, 'quizzes');
+                const docRef = await addDoc(ref, { quizzes: [...quizzes] });
+                const { id: docId } = docRef;
+                const userRef = doc(db, "users", user);
+                const docSnap = await getDoc(userRef);
+                if (docSnap.exists()) {
+                    let { askedQuiz = [] } = docSnap.data();
+                    const newQuiz = [docId, ...askedQuiz];
+                    await updateDoc(userRef, { askedQuiz: newQuiz });
+                    console.log("Quiz Uploaded");
+                    setShowDialog(true);
+                }
+            } catch (e) {
+                console.log(e);
             }
-        } catch (e) {
-            console.log(e);
         }
-    }
 
-    if (totalQuizzes === 1) uploadQuiz();
+        if (quizzes.length === 1) {
+            uploadQuiz();
+            setQuizzes([]);
+        }
+    }, [quizzes]);
 
-    const submitHandler = (e) => {
+    const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
         const { question, answer1, answer2, answer3, answer4 } = data;
         const newQuestion = {
             question: question,
-            answer1: {
-                ans: answer1 || null,
-                correct: selected === 1,
-            },
-            answer2: {
-                ans: answer2 || null,
-                correct: selected === 2,
-            },
-            answer3: {
-                ans: answer3 || null,
-                correct: selected === 3,
-            },
-            answer4: {
-                ans: answer4 || null,
-                correct: selected === 4,
-            },
         };
         let optionCnt = 0;
-        for (const q of Object.entries(quizAction)) {
-            if (q[1] === true) optionCnt++;
+        if (answer1) {
+            newQuestion.answer1 = { ans: answer1, correct: selected === 1 };
+            optionCnt++;
+        }
+        if (answer2) {
+            newQuestion.answer2 = { ans: answer2, correct: selected === 2 };
+            optionCnt++;
+        }
+        if (answer3) {
+            newQuestion.answer3 = { ans: answer3, correct: selected === 3 };
+            optionCnt++;
+        }
+        if (answer4) {
+            newQuestion.answer4 = { ans: answer4, correct: selected === 4 };
+            optionCnt++;
         }
         if (optionCnt < 2) return;
         if (selected === 0) return;
-        if (totalQuizzes < 1) addQuiz(newQuestion);
+        setQuizzes((prev) => [...prev, newQuestion]);
         setSelected(0);
-        setQuizAction(defaultQuiz);
+        setQuizAction({
+            question: false,
+            option1: false,
+            option2: false,
+            option3: false,
+            option4: false,
+        });
     }
 
     return <section className={classes.showQuiz}>
@@ -140,11 +144,13 @@ const AddQuiz = () => {
             />
         </Modal>}
         {cancel && <Modal>
-            <Dialog text={'Cancelling Adding Quiz Questions'} />
+            <Dialog text={'Cancelling Adding Quiz Questions'}
+                first={<button className={classes.btn} onClick={() => setCancel(false)}>No</button>}
+                second={<a className={classes.btn} href="/profile" >Yes</a>} />
         </Modal>}
         <div className={classes.progress}></div>
         <p className={classes.questionNumber}>
-            {totalQuizzes >= 1 ? `5 Quizzes already added` : `Question ${totalQuizzes + 1}/5`}
+            {showDialog ? `5 Quizzes already added` : `Question ${quizzes.length + 1}/2`}
         </p>
         <form className={classes.form} method="post" onSubmit={submitHandler} action="/quiz/add-quiz">
             {!quizAction.question ?

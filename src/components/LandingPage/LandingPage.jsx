@@ -33,6 +33,7 @@ const LandingPage = () => {
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="/quiz/add-quiz">Add Quiz</a></li>
                 <li><a href="/">Random Quiz</a></li>
+                <li><a href="/login">Logout</a></li>
             </ul>
         </nav>
         <article className={classes.quizContainer}>
