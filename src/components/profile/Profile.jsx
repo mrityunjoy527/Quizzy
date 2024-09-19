@@ -20,7 +20,6 @@ const Profile = () => {
         takenQuiz,
         askedQuiz,
         fetchFirebaseUser,
-        fetchAskedQuiz,
     } = useFirebaseUser();
     const navigate = useNavigate();
     const user = localStorage.getItem("user");
@@ -53,6 +52,8 @@ const Profile = () => {
             } catch (e) {
                 console.log(e);
             }
+
+            console.log("fetched");
         }
 
         fetchQuizzes();
@@ -64,14 +65,15 @@ const Profile = () => {
         if (deleteQuizId) {
             try {
                 const newQuizzes = quizzes.filter(quiz => quiz.quizId !== deleteQuizId);
+                const newQuizIDs = newQuizzes.map(quiz => quiz.quizId);
                 await deleteDoc(doc(db, "quizzes", deleteQuizId));
-                fetchAskedQuiz(user);
-                await updateDoc(doc(db, "users", user), { askedQuiz: askedQuiz });
+                await updateDoc(doc(db, "users", user), { askedQuiz: newQuizIDs });
+                setShowDialog(false);
                 setQuizzes(newQuizzes);
             } catch (err) {
                 console.log(err);
-            } finally {
                 setShowDialog(false);
+            } finally {
                 setDeleteQuizId();
             }
         }

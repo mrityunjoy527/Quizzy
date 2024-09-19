@@ -96,7 +96,7 @@ const AddQuiz = () => {
             uploadQuiz();
             setQuizzes([]);
         }
-    }, [quizzes]);
+    }, [quizzes, user]);
 
     const submitHandler = async (e) => {
         e.preventDefault();

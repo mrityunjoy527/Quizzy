@@ -9,6 +9,7 @@ import AddQuiz from "./components/addQuiz/AddQuiz.jsx";
 import Home from "./components/home/Home.jsx";
 import { ShowQuiz } from './components/ShowQuiz/ShowQuiz.jsx';
 import { EditProfile } from './components/user-connect/EditProfile.jsx';
+import React from 'react';
 
 const router = createBrowserRouter([
   {
